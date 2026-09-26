@@ -62,7 +62,9 @@ export default automation(
     )
     slack.sendMessage({
       conversation: parameters.reviewConversationId,
-      text: t`Review Calendly no-show for ${ambiguous.email}: ${ambiguous.contacts.transform((contacts) => contacts.length)} HubSpot contacts matched. Event: ${ambiguous.eventUrl}. No contact task was created.`,
+      text: t`Review Calendly no-show for ${ambiguous.email}: ${ambiguous.contacts.transform((contacts) => contacts.length)} HubSpot contacts matched. Event: ${ambiguous.eventUrl}. No contact task was created.`.transform(
+        escapeSlackText,
+      ),
     })
 
     const resolved = match.filter(
@@ -90,3 +92,11 @@ export default automation(
     })
   },
 )
+
+/** Keeps provider text from becoming Slack mentions or control markup. */
+function escapeSlackText(text: string) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+}
